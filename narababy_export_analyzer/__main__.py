@@ -8,7 +8,7 @@ from .db.engine import engine
 
 if __name__ == "__main__":
     p = NarababyEventLogParser()
-    file_path = "csv_fun/data/export_raw.csv"
+    file_path = "data/export_raw.csv"
     data = p.parse(file_path)
     factory = ModelFactory(data)
 
