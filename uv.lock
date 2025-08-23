@@ -167,18 +167,24 @@ name = "narababy-export-analyzer"
 version = "0.8.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "black" },
-    { name = "mypy" },
-    { name = "ruff" },
     { name = "sqlalchemy" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "black" },
+    { name = "mypy" },
+    { name = "ruff" },
+]
+
 [package.metadata]
-requires-dist = [
+requires-dist = [{ name = "sqlalchemy", specifier = ">=2.0.43" }]
+
+[package.metadata.requires-dev]
+dev = [
     { name = "black", specifier = ">=25.1.0" },
     { name = "mypy", specifier = ">=1.17.1" },
     { name = "ruff", specifier = ">=0.12.10" },
-    { name = "sqlalchemy", specifier = ">=2.0.43" },
 ]
 
 [[package]]
