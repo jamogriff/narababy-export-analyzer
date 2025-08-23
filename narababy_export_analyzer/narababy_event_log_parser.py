@@ -18,6 +18,7 @@ class NarababyEventLogParser:
 
             if csv_attributes.has_header:
                 header = next(reader)
+                # TODO: validate that this is a certain format
                 print(f"Header: {header}")
 
             row_count = 0
@@ -30,16 +31,8 @@ class NarababyEventLogParser:
                     row_instance.hydrate_from_row(row)
                     data.append(row_instance)
 
-            capture_percentage = (len(data) / row_count) * 100
-
-            print("----------------")
             end = time.perf_counter()
             time_elapsed = end - start
-            print(
-                f"{capture_percentage:.0f}% rows captured ({len(data)}/{row_count}) in {time_elapsed:.4f} seconds"
-            )
-            print("----------------")
-
             return ParseResults(data, row_count, time_elapsed)
 
     def _get_csv_attributes(self, csv_file_path: str) -> CSVAttributes:
