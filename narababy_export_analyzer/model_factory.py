@@ -1,4 +1,4 @@
-from .parse_results import ParseResults
+from .dtos.parse_results import ParseResults
 from .dtos.narababy_event_row import NarababyEventRow
 from .dtos.narababy_bottle_feed_row import NarababyBottleFeedRow
 from .dtos.narababy_pump_row import NarababyPumpRow
