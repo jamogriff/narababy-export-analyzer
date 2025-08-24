@@ -8,10 +8,11 @@ from .dtos.narababy_diaper_row import NarababyDiaperRow
 from .dtos.narababy_pump_row import NarababyPumpRow
 from .db.db import engine, does_database_exist
 from .models.base import Base
-from .utils.cli_utils import display_success, display_failure, get_elapsed_time
+from .utils.cli_utils import display_info, display_title, display_success, display_failure, get_elapsed_time
 
 if __name__ == "__main__":
     parser = NarababyEventLogParser()
+    display_title("Narababy Export Analyzer")
     file_path = input(f"Enter the file path to the Narababy export CSV: ")
     try:
         parser.check(file_path)
@@ -30,7 +31,7 @@ if __name__ == "__main__":
         Base.create_all()
         display_success("Created new database.")
     else:
-        display_success("Database exists.")
+        display_info("Database exists.")
 
     model_factory = ModelFactory(parse_results)
     start = time.perf_counter()
