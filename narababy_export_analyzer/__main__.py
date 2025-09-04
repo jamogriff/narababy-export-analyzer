@@ -8,16 +8,29 @@ from .model_factory import ModelFactory
 from .dtos.narababy_bottle_feed_row import NarababyBottleFeedRow
 from .dtos.narababy_diaper_row import NarababyDiaperRow
 from .dtos.narababy_pump_row import NarababyPumpRow
-from .db.db import engine, does_data_exist
+from .db.db import get_engine, get_session, initialize_database, does_data_exist
 from .models.base import Base
 from .utils.cli_utils import get_elapsed_time
 from .importer import Importer
 
 if __name__ == "__main__":
     io = BareCLI()
-    parser = NarababyEventLogParser()
-    importer = Importer(engine)
     io.title("Narababy Export Analyzer")
+
+    # Shortcut to data analysis REPL if data already exists
+    if does_data_exist():
+        choice = io.choice(
+            "Data already exists. Do you want to analyze existing data or import another export file?",
+            ['Analyze existing data', 'Import another export file']
+        )
+
+        if choice[0] == 0:
+            io.info("Using existing dataset.")
+            local_namespace = dict(globals(), **locals())
+            code.interact(banner="Lettuce Analyze", local=local_namespace)
+
+
+    parser = NarababyEventLogParser()
     file_path = io.ask(f"Enter the file path to the Narababy export CSV: ")
     try:
         parser.check(file_path)
@@ -32,15 +45,6 @@ if __name__ == "__main__":
     summary = "{0:.0f}% rows captured ({1}/{2}) in {3:.1f} ms".format(capture_percentage, len(parse_results.data), parse_results.rows_processed, get_elapsed_time(start, end))
     io.success(summary)
 
-    # This conditional does not work
-    if not does_data_exist(engine):
-        start = time.perf_counter()
-        Base.metadata.create_all(engine)
-        end = time.perf_counter()
-        io.success(f"Created new database in {get_elapsed_time(start, end):.1f} ms")
-    else:
-        io.info("Database already exists.")
-
     model_factory = ModelFactory(parse_results)
     start = time.perf_counter()
     models = model_factory.make()
@@ -48,6 +52,16 @@ if __name__ == "__main__":
     total_models = len(models.babies) + len(models.caregivers) + len(models.bottles) + len(models.diapers) + len(models.pumps)
     io.success(f"{total_models} models created via DTOs in {get_elapsed_time(start, end):.1f} ms")
 
+    # We have persistable data at this point,
+    # so initialize database
+    io.info("Initializing database.")
+    start = time.perf_counter()
+    result = initialize_database();
+    Base.metadata.create_all(get_engine())
+    end = time.perf_counter()
+    io.success(f"Created new database in {get_elapsed_time(start, end):.1f} ms")
+
+    importer = Importer(get_engine())
     start = time.perf_counter()
     importer.import_models(models)
     end = time.perf_counter()
