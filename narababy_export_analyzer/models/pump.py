@@ -23,6 +23,9 @@ class Pump(Base):
         self.caregiver = caregiver
         self.timestamp = timestamp
 
+    def __str__(self) -> str:
+        return f"Pump by {caregiver.name} at {self.timestamp}"
+
     @classmethod
     def from_narababy_pump_row(
         cls, narababy_row: NarababyPumpRow, caregiver: Caregiver

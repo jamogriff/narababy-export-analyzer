@@ -7,4 +7,3 @@ class MilkFeedRepository(AbstractRepository):
 
     def __init__(self, session: Session):
         super().__init__(session, MilkFeed)
-

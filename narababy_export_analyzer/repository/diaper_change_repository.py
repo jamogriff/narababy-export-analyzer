@@ -7,4 +7,3 @@ class DiaperChangeRepository(AbstractRepository):
 
     def __init__(self, session: Session):
         super().__init__(session, DiaperChange)
-

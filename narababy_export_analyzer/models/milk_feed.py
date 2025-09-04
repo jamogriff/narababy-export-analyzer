@@ -41,6 +41,9 @@ class MilkFeed(Base):
         self.unit = unit
         self.timestamp = timestamp
 
+    def __str__(self) -> str:
+        return f"{baby.name} milk feed by {caregiver.name} at {self.timestamp}"
+
     @classmethod
     def from_narababy_bottle_feed_row(
         cls, narababy_row: NarababyBottleFeedRow, baby: Baby, caregiver: Caregiver

@@ -7,4 +7,3 @@ class BabyRepository(AbstractRepository):
 
     def __init__(self, session: Session):
         super().__init__(session, Baby)
-

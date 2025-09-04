@@ -14,8 +14,10 @@ DB_FILENAME = "export.db"
 _engine: Engine | None = None
 _SessionLocal: sessionmaker | None = None
 
+
 def get_database_path() -> Path:
     return Path(user_data_dir(APP_NAME, AUTHOR)) / DB_FILENAME
+
 
 def initialize_database() -> bool:
     global _engine
@@ -45,18 +47,21 @@ def initialize_database() -> bool:
         _engine = None
         return False
 
+
 def get_engine() -> Engine:
     global _engine
     if _engine is None:
         db_path = get_database_path()
-        _engine = create_engine(f"sqlite+pysqlite:///{db_path}", echo=False)
+        _engine = create_engine(f"sqlite+pysqlite:///{db_path}", echo=True)
     return _engine
+
 
 def get_session() -> Session:
     global _SessionLocal
     if _SessionLocal is None:
         _SessionLocal = sessionmaker(bind=get_engine(), expire_on_commit=False)
     return _SessionLocal()
+
 
 def does_data_exist() -> bool:
     with get_session() as session:
@@ -67,4 +72,3 @@ def does_data_exist() -> bool:
             count = 0
 
     return count > 0
-

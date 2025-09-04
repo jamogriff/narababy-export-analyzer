@@ -38,6 +38,9 @@ class DiaperChange(Base):
         self.is_poop = is_poop
         self.is_pee = is_pee
 
+    def __str__(self) -> str:
+        return f"{baby.name} diaper change by {caregiver.name} at {self.timestamp}"
+
     @classmethod
     def from_narababy_diaper_row(
         cls, narababy_row: NarababyDiaperRow, baby: Baby, caregiver: Caregiver

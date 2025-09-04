@@ -19,7 +19,7 @@ class NarababyEventLogParser:
 
         Raises:
             FileNotFoundError: If file does not exist.
-            ValueError: If CSV file does not match reference Narababy export. 
+            ValueError: If CSV file does not match reference Narababy export.
         """
 
         self._assert_is_file(csv_file_path)
@@ -45,17 +45,32 @@ class NarababyEventLogParser:
         # The first 20 values of Narababy's reference
         # CSV header that input CSV should be measured against
         reference_header = [
-            'Type', 'Profile Name', 'Start Date/time', 'Start Date/time (Epoch)',
-            'Created By Caregiver', 'Last Updated By Caregiver', 'Note', 'Time Zone',
-            '[Bottle Feed] Type', '[Bottle Feed] Breast Milk Volume',
-            '[Bottle Feed] Breast Milk Volume Unit', '[Bottle Feed] Formula Name',
-            '[Bottle Feed] Formula Volume', '[Bottle Feed] Formula Volume Unit',
-            '[Bottle Feed] Volume', '[Bottle Feed] Volume Unit', '[Diaper] Type',
-            '[Diaper] Detail', '[Diaper] Dirty Color', '[Diaper] Dirty Texture'
+            "Type",
+            "Profile Name",
+            "Start Date/time",
+            "Start Date/time (Epoch)",
+            "Created By Caregiver",
+            "Last Updated By Caregiver",
+            "Note",
+            "Time Zone",
+            "[Bottle Feed] Type",
+            "[Bottle Feed] Breast Milk Volume",
+            "[Bottle Feed] Breast Milk Volume Unit",
+            "[Bottle Feed] Formula Name",
+            "[Bottle Feed] Formula Volume",
+            "[Bottle Feed] Formula Volume Unit",
+            "[Bottle Feed] Volume",
+            "[Bottle Feed] Volume Unit",
+            "[Diaper] Type",
+            "[Diaper] Detail",
+            "[Diaper] Dirty Color",
+            "[Diaper] Dirty Texture",
         ]
 
         if header[:20] != reference_header:
-            raise ValueError("Provided CSV's header does not match reference Narababy export CSV.")
+            raise ValueError(
+                "Provided CSV's header does not match reference Narababy export CSV."
+            )
 
         # At this point we are dealing with a valid CSV export
         # Set attributes to enable calling parse
@@ -79,7 +94,7 @@ class NarababyEventLogParser:
                 if row[0]:
                     row_count += 1
                     # If that event type is in the Row registry
-                    # create a DTO and add it to the dataset 
+                    # create a DTO and add it to the dataset
                     if row[0] in NarababyEventRow.registry.keys():
                         row_class = NarababyEventRow.registry[row[0]]
                         row_instance = row_class()
@@ -107,5 +122,3 @@ class NarababyEventLogParser:
 
         if os.path.splitext(file_path)[1].lower() != ".csv":
             raise ValueError("Narababy export file must be a .csv file")
-
-

@@ -16,4 +16,3 @@ class AbstractRepository(ABC):
             count = session.execute(stmt).scalar_one()
 
         return count
-

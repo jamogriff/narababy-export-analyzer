@@ -6,11 +6,13 @@ from .repository.diaper_change_repository import DiaperChangeRepository
 from .repository.milk_feed_repository import MilkFeedRepository
 from .repository.pump_repository import PumpRepository
 from .model_import_error import ModelImportError
+from .db.db import get_session
+
 
 class Importer:
 
-    def __init__(self, engine):
-        self.session = Session(engine)
+    def __init__(self):
+        self.session = get_session()
         self.baby_repo = BabyRepository(self.session)
         self.caregiver_repo = CaregiverRepository(self.session)
         self.diaper_change_repo = DiaperChangeRepository(self.session)
@@ -31,20 +33,34 @@ class Importer:
         errors = []
 
         if self.baby_repo.count() != len(models.babies):
-            errors.append(ModelImportError("Baby", len(models.babies), self.baby_repo.count()))
+            errors.append(
+                ModelImportError("Baby", len(models.babies), self.baby_repo.count())
+            )
 
         if self.caregiver_repo.count() != len(models.caregivers):
-            errors.append(ModelImportError("Caregiver", len(models.caregivers), self.caregiver_repo.count()))
+            errors.append(
+                ModelImportError(
+                    "Caregiver", len(models.caregivers), self.caregiver_repo.count()
+                )
+            )
 
         if self.milk_feed_repo.count() != len(models.bottles):
-            errors.append(ModelImportError("MilkFeed", len(models.bottles), self.milk_feed_repo.count()))
+            errors.append(
+                ModelImportError(
+                    "MilkFeed", len(models.bottles), self.milk_feed_repo.count()
+                )
+            )
 
         if self.diaper_change_repo.count() != len(models.diapers):
-            errors.append(ModelImportError("DiaperChange", len(models.diapers), self.diaper_change_repo.count()))
+            errors.append(
+                ModelImportError(
+                    "DiaperChange", len(models.diapers), self.diaper_change_repo.count()
+                )
+            )
 
         if self.pump_repo.count() != len(models.pumps):
-            errors.append(ModelImportError("Pump", len(models.pumps), self.pump_repo.count()))
+            errors.append(
+                ModelImportError("Pump", len(models.pumps), self.pump_repo.count())
+            )
 
         return errors
-
-

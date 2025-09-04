@@ -27,3 +27,6 @@ class Caregiver(Base):
         if not isinstance(other, Caregiver):
             return NotImplemented
         return self.name == other.name
+
+    def __str__(self) -> str:
+        return self.name
