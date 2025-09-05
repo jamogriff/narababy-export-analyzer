@@ -15,7 +15,7 @@ class CaregiverRepository(AbstractRepository):
     def get_feeds_by_caregivers(self, baby: Baby) -> list[tuple[str, int]]:
         with self.session as session:
             stmt = (
-                select(self.model.name, func.count(MilkFeed.id))
+                select(self.model.name, func.count(MilkFeed.id).label("total_feeds"))
                 .outerjoin(MilkFeed)
                 .where(MilkFeed.baby == baby)
                 .group_by(self.model.name)
@@ -25,7 +25,10 @@ class CaregiverRepository(AbstractRepository):
     def get_diaper_changes_by_caregivers(self, baby: Baby) -> list[tuple[str, int]]:
         with self.session as session:
             stmt = (
-                select(self.model.name, func.count(DiaperChange.id))
+                select(
+                    self.model.name,
+                    func.count(DiaperChange.id).label("total_diaper_changes"),
+                )
                 .outerjoin(DiaperChange)
                 .where(DiaperChange.baby == baby)
                 .group_by(self.model.name)
@@ -35,7 +38,7 @@ class CaregiverRepository(AbstractRepository):
     def get_pumps_by_caregivers(self) -> list[tuple[str, int]]:
         with self.session as session:
             stmt = (
-                select(self.model.name, func.count(Pump.id))
+                select(self.model.name, func.count(Pump.id).label("total_pumps"))
                 .outerjoin(Pump)
                 .group_by(self.model.name)
             )
