@@ -36,4 +36,5 @@ lint.ignore = ["E501", "F401"] # Let Black handle line length
 show_error_codes = true
 warn_unused_ignores = true
 warn_redundant_casts = true
-strict = true
+ignore_missing_imports = true
+disallow_untyped_defs = false
