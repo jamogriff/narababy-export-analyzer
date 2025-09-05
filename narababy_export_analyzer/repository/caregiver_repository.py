@@ -12,7 +12,7 @@ class CaregiverRepository(AbstractRepository):
     def __init__(self, session: Session):
         super().__init__(session, Caregiver)
 
-    def get_feeds_by_caregivers(self, baby: Baby) -> list[tuple[str, int]]:
+    def find_feeds_by_caregivers(self, baby: Baby) -> list[tuple[str, int]]:
         with self.session as session:
             stmt = (
                 select(self.model.name, func.count(MilkFeed.id).label("total_feeds"))
@@ -22,7 +22,7 @@ class CaregiverRepository(AbstractRepository):
             )
             return self.session.execute(stmt).all()
 
-    def get_diaper_changes_by_caregivers(self, baby: Baby) -> list[tuple[str, int]]:
+    def find_diaper_changes_by_caregivers(self, baby: Baby) -> list[tuple[str, int]]:
         with self.session as session:
             stmt = (
                 select(
@@ -35,7 +35,7 @@ class CaregiverRepository(AbstractRepository):
             )
             return self.session.execute(stmt).all()
 
-    def get_pumps_by_caregivers(self) -> list[tuple[str, int]]:
+    def find_pumps_by_caregivers(self) -> list[tuple[str, int]]:
         with self.session as session:
             stmt = (
                 select(self.model.name, func.count(Pump.id).label("total_pumps"))
