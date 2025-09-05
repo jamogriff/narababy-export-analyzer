@@ -1,3 +1,4 @@
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from .abstract_repository import AbstractRepository
 from ..models.baby import Baby
@@ -35,6 +36,7 @@ class CaregiverRepository(AbstractRepository):
             )
             return self.session.execute(stmt).all()
 
+    # TODO: add filter counts for dirty/wet
     def find_pumps_by_caregivers(self) -> list[tuple[str, int]]:
         with self.session as session:
             stmt = (

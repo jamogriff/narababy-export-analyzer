@@ -1,3 +1,4 @@
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from .abstract_repository import AbstractRepository
 from ..models.baby import Baby
@@ -9,6 +10,10 @@ class BabyRepository(AbstractRepository):
 
     def __init__(self, session: Session):
         super().__init__(session, Baby)
+
+    def find_all(self) -> list[Baby]:
+        with self.session as session:
+            return session.scalars(select(Baby)).all()
 
     def find_bottle_statistics(self, baby: Baby) -> tuple[str, int, float, float]:
         with self.session as session:
@@ -35,8 +40,8 @@ class BabyRepository(AbstractRepository):
                 select(
                     self.model.name,
                     func.count(DiaperChange.id).label("total_diaper_changes"),
-                    func.count(DiaperChange.id).filter(DiaperChange.is_poop == True).label("total_dirty_diapers"),
-                    func.count(DiaperChange.id).filter(DiaperChange.is_pee == True).label("total_wet_diapers"),
+                    func.count(DiaperChange.id).filter(DiaperChange.is_poop == True).label("dirty_diapers"),
+                    func.count(DiaperChange.id).filter(DiaperChange.is_pee == True).label("wet_diapers"),
                 )
                 .join(DiaperChange)
                 .where(DiaperChange.baby == baby)
