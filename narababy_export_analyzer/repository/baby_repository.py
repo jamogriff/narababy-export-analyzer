@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from .abstract_repository import AbstractRepository
 from ..models.baby import Baby
+from ..models.milk_feed import MilkFeed
+from ..models.diaper_change import DiaperChange
 
 
 class BabyRepository(AbstractRepository):
@@ -8,21 +10,36 @@ class BabyRepository(AbstractRepository):
     def __init__(self, session: Session):
         super().__init__(session, Baby)
 
-    def find_bottle_statistics(self, baby: Baby) -> list[tuple[str, int, float, float]]:
+    def find_bottle_statistics(self, baby: Baby) -> tuple[str, int, float, float]:
         with self.session as session:
             stmt = (
                 select(
-                    baby_repo.model.name,
-                    func.count(bottle_repo.model.id).label("total_bottles"),
-                    func.round(
-                        func.sum(bottle_repo.model.volume) / 1000 / 3.785, 1
-                    ).label("total_gallons"),
-                    func.round(func.avg(bottle_repo.model.volume) / 29.574, 2).label(
+                    self.model.name,
+                    func.count(MilkFeed.id).label("total_bottles"),
+                    func.round(func.sum(MilkFeed.volume) / 1000 / 3.785, 1).label(
+                        "total_gallons"
+                    ),
+                    func.round(func.avg(MilkFeed.volume) / 29.574, 2).label(
                         "average_oz"
                     ),
                 )
-                .join(bottle_repo.model)
-                .where(bottle_repo.model.baby == jack)
-                .group_by(baby_repo.model.name)
+                .join(MilkFeed)
+                .where(MilkFeed.baby == baby)
+                .group_by(self.model.name)
+            )
+            return session.execute(stmt).first()
+
+    def find_diaper_change_statistics(self, baby: Baby) -> tuple[str, int, int, int]:
+        with self.session as session:
+            stmt = (
+                select(
+                    self.model.name,
+                    func.count(DiaperChange.id).label("total_diaper_changes"),
+                    func.count(DiaperChange.id).filter(DiaperChange.is_poop == True).label("total_dirty_diapers"),
+                    func.count(DiaperChange.id).filter(DiaperChange.is_pee == True).label("total_wet_diapers"),
+                )
+                .join(DiaperChange)
+                .where(DiaperChange.baby == baby)
+                .group_by(self.model.name)
             )
             return session.execute(stmt).first()
